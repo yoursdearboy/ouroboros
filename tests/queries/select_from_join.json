@@ -1,34 +1,34 @@
 {
-    "columns": [
-        {
-            "name": "id",
-            "expr": {
-                "table": {
-                    "name": "patients"
-                },
-                "name": "id"
+    "select": {
+        "columns": [
+            {
+                "name": "patients_id",
+                "expr": {
+                    "table": {
+                        "name": "patients"
+                    },
+                    "name": "id"
+                }
+            },
+            {
+                "name": "patients_last_name",
+                "expr": {
+                    "table": {
+                        "name": "patients"
+                    },
+                    "name": "last_name"
+                }
+            },
+            {
+                "name": "diagnoses_icd_code",
+                "expr": {
+                    "table": {
+                        "name": "diagnoses"
+                    },
+                    "name": "icd_code"
+                }
             }
-        },
-        {
-            "name": "last_name",
-            "expr": {
-                "table": {
-                    "name": "patients"
-                },
-                "name": "last_name"
-            }
-        },
-        {
-            "name": "icd_code",
-            "expr": {
-                "table": {
-                    "name": "diagnoses"
-                },
-                "name": "icd_code"
-            }
-        }
-    ],
-    "selectable": {
+        ],
         "froms": [
             {
                 "left": {
@@ -37,7 +37,7 @@
                 "right": {
                     "name": "diagnoses"
                 },
-                "onclause": "patients.id = diagnoses.patient_id"
+                "on": "patients.id = diagnoses.patient_id"
             }
         ]
     }

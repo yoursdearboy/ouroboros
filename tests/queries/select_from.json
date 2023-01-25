@@ -1,25 +1,25 @@
 {
-    "columns": [
-        {
-            "name": "id",
-            "expr": {
-                "table": {
-                    "name": "patients"
-                },
-                "name": "id"
+    "select": {
+        "columns": [
+            {
+                "name": "patients_id",
+                "expr": {
+                    "table": {
+                        "name": "patients"
+                    },
+                    "name": "id"
+                }
+            },
+            {
+                "name": "patients_last_name",
+                "expr": {
+                    "table": {
+                        "name": "patients"
+                    },
+                    "name": "last_name"
+                }
             }
-        },
-        {
-            "name": "last_name",
-            "expr": {
-                "table": {
-                    "name": "patients"
-                },
-                "name": "last_name"
-            }
-        }
-    ],
-    "selectable": {
+        ],
         "froms": [
             {
                 "name": "patients"

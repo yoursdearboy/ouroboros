@@ -40,6 +40,22 @@ class TableModel(SQLAlchemyBaseModel):
         return self.table()
 
 
+class JoinModel(SQLAlchemyBaseModel):
+    left: Union[TableModel, 'JoinModel']
+    right: Union[TableModel, 'JoinModel']
+    on: str = Field(alias='onclause')
+
+    @validator('on', pre=True)
+    def onclause_to_text(cls, v, values, **kwargs):
+        return str(v)
+
+    def join(self):
+        return sa.orm.join(self.left.from_(), self.right.from_(), sa.text(self.on))
+
+    def from_(self):
+        return self.join()
+
+
 class ColumnModel(SQLAlchemyBaseModel):
     table: TableModel
     name: str
@@ -58,36 +74,29 @@ class ColumnDescriptionModel(SQLAlchemyBaseModel):
         return column
 
 
-class JoinModel(SQLAlchemyBaseModel):
-    left: Union[TableModel, 'JoinModel']
-    right: Union[TableModel, 'JoinModel']
-    onclause: str
-
-    @validator('onclause', pre=True)
-    def onclause_to_text(cls, v, values, **kwargs):
-        return str(v)
-
-    def from_(self):
-        return sa.orm.join(self.left.from_(), self.right.from_(), sa.text(self.onclause))
-
-
 class SelectableModel(SQLAlchemyBaseModel):
+    columns: list[ColumnDescriptionModel] = Field(alias='column_descriptions')
     froms: list[TableModel | JoinModel]
 
     @classmethod
     def from_orm(cls, orm):
-        return cls(froms=orm.get_final_froms())
+        return cls(column_descriptions=orm.column_descriptions,
+                   froms=orm.get_final_froms())
 
-    def froms_(self):
+    def _columns(self):
+        return [c.column() for c in self.columns]
+
+    def _froms(self):
         return [f.from_() for f in self.froms]
+
+    def selectable(self):
+        return (self._columns(), self._froms())
 
 
 class QueryModel(SQLAlchemyBaseModel):
-    columns: list[ColumnDescriptionModel] = Field(alias='column_descriptions')
-    selectable: SelectableModel
+    select: SelectableModel = Field(alias='selectable')
 
     def query(self):
-        columns = [c.column() for c in self.columns]
-        froms = self.selectable.froms_()
+        columns, froms = self.select.selectable()
         q = self.session.query(*columns).select_from(*froms)
         return q

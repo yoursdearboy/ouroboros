@@ -1,43 +1,43 @@
 {
-    "columns": [
-        {
-            "name": "id",
-            "expr": {
-                "table": {
-                    "name": "patients"
-                },
-                "name": "id"
+    "select": {
+        "columns": [
+            {
+                "name": "patients_id",
+                "expr": {
+                    "table": {
+                        "name": "patients"
+                    },
+                    "name": "id"
+                }
+            },
+            {
+                "name": "patients_last_name",
+                "expr": {
+                    "table": {
+                        "name": "patients"
+                    },
+                    "name": "last_name"
+                }
+            },
+            {
+                "name": "donorships_date",
+                "expr": {
+                    "table": {
+                        "name": "donorships"
+                    },
+                    "name": "date"
+                }
+            },
+            {
+                "name": "donors_last_name",
+                "expr": {
+                    "table": {
+                        "name": "donors"
+                    },
+                    "name": "last_name"
+                }
             }
-        },
-        {
-            "name": "last_name",
-            "expr": {
-                "table": {
-                    "name": "patients"
-                },
-                "name": "last_name"
-            }
-        },
-        {
-            "name": "date",
-            "expr": {
-                "table": {
-                    "name": "donorships"
-                },
-                "name": "date"
-            }
-        },
-        {
-            "name": "last_name",
-            "expr": {
-                "table": {
-                    "name": "donors"
-                },
-                "name": "last_name"
-            }
-        }
-    ],
-    "selectable": {
+        ],
         "froms": [
             {
                 "left": {
@@ -47,12 +47,12 @@
                     "right": {
                         "name": "donorships"
                     },
-                    "onclause": "donorships.patient_id = patients.id"
+                    "on": "donorships.patient_id = patients.id"
                 },
                 "right": {
                     "name": "donors"
                 },
-                "onclause": "donors.id = donorships.donor_id"
+                "on": "donors.id = donorships.donor_id"
             }
         ]
     }
