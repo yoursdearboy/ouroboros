@@ -1,57 +1,19 @@
 {
     "select": {
         "columns": [
-            {
-                "name": "patients_id",
-                "expr": {
-                    "table": {
-                        "name": "patients"
-                    },
-                    "name": "id"
-                }
-            },
-            {
-                "name": "patients_last_name",
-                "expr": {
-                    "table": {
-                        "name": "patients"
-                    },
-                    "name": "last_name"
-                }
-            },
-            {
-                "name": "donorships_date",
-                "expr": {
-                    "table": {
-                        "name": "donorships"
-                    },
-                    "name": "date"
-                }
-            },
-            {
-                "name": "donors_last_name",
-                "expr": {
-                    "table": {
-                        "name": "donors"
-                    },
-                    "name": "last_name"
-                }
-            }
+            "patients.id",
+            "patients.last_name",
+            "donorships.date",
+            "donors.last_name"
         ],
-        "froms": [
+        "from": [
             {
                 "left": {
-                    "left": {
-                        "name": "patients"
-                    },
-                    "right": {
-                        "name": "donorships"
-                    },
+                    "left": "patients",
+                    "right": "donorships",
                     "on": "donorships.patient_id = patients.id"
                 },
-                "right": {
-                    "name": "donors"
-                },
+                "right": "donors",
                 "on": "donors.id = donorships.donor_id"
             }
         ]

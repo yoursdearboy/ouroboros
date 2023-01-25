@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 from contextvars import ContextVar
-from typing import Union
+from typing import Optional, Union
 
 import sqlalchemy as sa
 import sqlalchemy.orm
@@ -30,6 +30,12 @@ class SQLAlchemyBaseModel(BaseModel):
         return self.__context__.get()[1]
 
 
+def _table_from_str(obj):
+    if isinstance(obj, str):
+        return dict(name=obj)
+    return obj
+
+
 class TableModel(SQLAlchemyBaseModel):
     name: str
 
@@ -45,6 +51,9 @@ class JoinModel(SQLAlchemyBaseModel):
     right: Union[TableModel, 'JoinModel']
     on: str = Field(alias='onclause')
 
+    _left_from_str = validator('left', pre=True, allow_reuse=True)(_table_from_str)
+    _right_from_str = validator('right', pre=True, allow_reuse=True)(_table_from_str)
+
     @validator('on', pre=True)
     def onclause_to_text(cls, v, values, **kwargs):
         return str(v)
@@ -56,18 +65,35 @@ class JoinModel(SQLAlchemyBaseModel):
         return self.join()
 
 
+def _column_from_str(obj):
+    if isinstance(obj, str):
+        table, name = obj.split('.')
+        return dict(table=table, name=name)
+    return obj
+
+
 class ColumnModel(SQLAlchemyBaseModel):
     table: TableModel
     name: str
+
+    _table_from_str = validator('table', pre=True, allow_reuse=True)(_table_from_str)
 
     def column(self):
         table = self.table.table()
         return table.columns[self.name]
 
 
+def _column_description_from_str(obj):
+    if isinstance(obj, str):
+        return dict(expr=obj)
+    return obj
+
+
 class ColumnDescriptionModel(SQLAlchemyBaseModel):
-    name: str
+    name: Optional[str]
     expr: ColumnModel
+
+    _column_from_str = validator('expr', pre=True, allow_reuse=True)(_column_from_str)
 
     def column(self):
         column = self.expr.column()
@@ -76,7 +102,25 @@ class ColumnDescriptionModel(SQLAlchemyBaseModel):
 
 class SelectableModel(SQLAlchemyBaseModel):
     columns: list[ColumnDescriptionModel] = Field(alias='column_descriptions')
-    froms: list[TableModel | JoinModel]
+    froms: list[TableModel | JoinModel] = Field(alias='from')
+
+    @validator('columns', pre=True)
+    def _columns_from_str(cls, v, values, **kwargs):
+        columns = []
+        for c in v:
+            if isinstance(c, str):
+                c = _column_description_from_str(c)
+            columns.append(c)
+        return columns
+
+    @validator('froms', pre=True)
+    def _froms_from_str(cls, v, values, **kwargs):
+        froms = []
+        for f in v:
+            if isinstance(f, str):
+                f = _table_from_str(f)
+            froms.append(f)
+        return froms
 
     @classmethod
     def from_orm(cls, orm):

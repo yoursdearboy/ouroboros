@@ -1,42 +1,14 @@
 {
     "select": {
         "columns": [
-            {
-                "name": "patients_id",
-                "expr": {
-                    "table": {
-                        "name": "patients"
-                    },
-                    "name": "id"
-                }
-            },
-            {
-                "name": "patients_last_name",
-                "expr": {
-                    "table": {
-                        "name": "patients"
-                    },
-                    "name": "last_name"
-                }
-            },
-            {
-                "name": "diagnoses_icd_code",
-                "expr": {
-                    "table": {
-                        "name": "diagnoses"
-                    },
-                    "name": "icd_code"
-                }
-            }
+            "patients.id",
+            "patients.last_name",
+            "diagnoses.icd_code"
         ],
-        "froms": [
+        "from": [
             {
-                "left": {
-                    "name": "patients"
-                },
-                "right": {
-                    "name": "diagnoses"
-                },
+                "left": "patients",
+                "right": "diagnoses",
                 "on": "patients.id = diagnoses.patient_id"
             }
         ]

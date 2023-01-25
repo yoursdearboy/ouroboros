@@ -1,29 +1,11 @@
 {
     "select": {
         "columns": [
-            {
-                "name": "patients_id",
-                "expr": {
-                    "table": {
-                        "name": "patients"
-                    },
-                    "name": "id"
-                }
-            },
-            {
-                "name": "patients_last_name",
-                "expr": {
-                    "table": {
-                        "name": "patients"
-                    },
-                    "name": "last_name"
-                }
-            }
+            "patients.id",
+            "patients.last_name"
         ],
-        "froms": [
-            {
-                "name": "patients"
-            }
+        "from": [
+            "patients"
         ]
     }
 }
