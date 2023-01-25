@@ -1,0 +1,29 @@
+{
+    "columns": [
+        {
+            "name": "id",
+            "expr": {
+                "table": {
+                    "name": "patients"
+                },
+                "name": "id"
+            }
+        },
+        {
+            "name": "last_name",
+            "expr": {
+                "table": {
+                    "name": "patients"
+                },
+                "name": "last_name"
+            }
+        }
+    ],
+    "selectable": {
+        "froms": [
+            {
+                "name": "patients"
+            }
+        ]
+    }
+}

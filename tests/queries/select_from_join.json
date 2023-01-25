@@ -1,0 +1,44 @@
+{
+    "columns": [
+        {
+            "name": "id",
+            "expr": {
+                "table": {
+                    "name": "patients"
+                },
+                "name": "id"
+            }
+        },
+        {
+            "name": "last_name",
+            "expr": {
+                "table": {
+                    "name": "patients"
+                },
+                "name": "last_name"
+            }
+        },
+        {
+            "name": "icd_code",
+            "expr": {
+                "table": {
+                    "name": "diagnoses"
+                },
+                "name": "icd_code"
+            }
+        }
+    ],
+    "selectable": {
+        "froms": [
+            {
+                "left": {
+                    "name": "patients"
+                },
+                "right": {
+                    "name": "diagnoses"
+                },
+                "onclause": "patients.id = diagnoses.patient_id"
+            }
+        ]
+    }
+}

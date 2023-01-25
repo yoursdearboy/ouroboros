@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 sqlalchemy = "~=1.4"
+pydantic = "~=1.10"
 
 [dev-packages]
 
