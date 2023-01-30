@@ -6,6 +6,8 @@ import sqlalchemy as sa
 import sqlalchemy.orm
 from pydantic import BaseModel, Field, validator
 
+from ouroboros.pivot import add_suffix, pivot
+
 
 class SQLAlchemyBaseModel(BaseModel):
     __context__ = ContextVar('context')
@@ -46,9 +48,52 @@ class TableModel(SQLAlchemyBaseModel):
         return self.table()
 
 
+class ColumnModel(SQLAlchemyBaseModel):
+    name: str
+    element: Optional[str]
+    table: Optional[TableModel]
+
+    @validator('element', pre=True)
+    def _element_to_str(cls, v, **kwargs):
+        if v:
+            return str(v)
+        return v
+
+    _table_from_str = validator('table', pre=True, allow_reuse=True)(_table_from_str)
+
+    def column(self):
+        if self.element:
+            return sa.column(self.element).label(self.name)
+        elif self.table:
+            table = self.table.table()
+            return table.columns[self.name]
+        else:
+            raise NotImplementedError
+
+
+def _column_description_from_str(obj):
+    if isinstance(obj, str):
+        return dict(expr=obj)
+    return obj
+
+
+class PivotModel(TableModel):
+    pivot_by: ColumnModel
+
+    def from_(self):
+        table = self.table()
+        query = self.session.query(table)
+        query = pivot(query, self.pivot_by.column())
+        add_suffix(query)
+        query = query.subquery()
+        setattr(query, "name", self.name)
+        setattr(query, "pivot_by", self.pivot_by)
+        return query
+
+
 class JoinModel(SQLAlchemyBaseModel):
     left: Union[TableModel, 'JoinModel']
-    right: Union[TableModel, 'JoinModel']
+    right: Union[PivotModel, TableModel, 'JoinModel']
     on: str = Field(alias='onclause')
 
     _left_from_str = validator('left', pre=True, allow_reuse=True)(_table_from_str)
@@ -72,26 +117,22 @@ def _column_from_str(obj):
     return obj
 
 
-class ColumnModel(SQLAlchemyBaseModel):
-    table: TableModel
+class BundleModel(SQLAlchemyBaseModel):
     name: str
+    columns: list[Union['BundleModel', 'ColumnDescriptionModel']]
 
-    _table_from_str = validator('table', pre=True, allow_reuse=True)(_table_from_str)
+    @validator('columns', pre=True)
+    def _columns_to_list(cls, v, **kwargs):
+        return list(v)
 
     def column(self):
-        table = self.table.table()
-        return table.columns[self.name]
-
-
-def _column_description_from_str(obj):
-    if isinstance(obj, str):
-        return dict(expr=obj)
-    return obj
+        columns = [c.column() for c in self.columns]
+        return sa.orm.Bundle(self.name, *columns)
 
 
 class ColumnDescriptionModel(SQLAlchemyBaseModel):
     name: Optional[str]
-    expr: ColumnModel
+    expr: Union[BundleModel, ColumnModel]
 
     _column_from_str = validator('expr', pre=True, allow_reuse=True)(_column_from_str)
 
@@ -144,3 +185,5 @@ class QueryModel(SQLAlchemyBaseModel):
         columns, froms = self.select.selectable()
         q = self.session.query(*columns).select_from(*froms)
         return q
+
+BundleModel.update_forward_refs()

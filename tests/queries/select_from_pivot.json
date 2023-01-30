@@ -1,0 +1,78 @@
+{
+    "select": {
+        "columns": [
+            {
+                "name": "patients_id",
+                "expr": {
+                    "name": "id",
+                    "element": null,
+                    "table": {
+                        "name": "patients"
+                    }
+                }
+            },
+            {
+                "name": "patients_last_name",
+                "expr": {
+                    "name": "last_name",
+                    "element": null,
+                    "table": {
+                        "name": "patients"
+                    }
+                }
+            },
+            {
+                "name": "diagnoses",
+                "expr": {
+                    "name": "diagnoses",
+                    "columns": [
+                        {
+                            "name": "1",
+                            "columns": [
+                                {
+                                    "name": "icd_code",
+                                    "expr": {
+                                        "name": "icd_code",
+                                        "element": "icd_code_1",
+                                        "table": null
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "2",
+                            "columns": [
+                                {
+                                    "name": "icd_code",
+                                    "expr": {
+                                        "name": "icd_code",
+                                        "element": "icd_code_2",
+                                        "table": null
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ],
+        "froms": [
+            {
+                "left": {
+                    "name": "patients"
+                },
+                "right": {
+                    "name": "diagnoses",
+                    "pivot_by": {
+                        "name": "patient_id",
+                        "element": null,
+                        "table": {
+                            "name": "diagnoses"
+                        }
+                    }
+                },
+                "on": "patients.id = diagnoses.patient_id"
+            }
+        ]
+    }
+}
