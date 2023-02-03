@@ -8,6 +8,7 @@ sqlalchemy = "~=2.0"
 pydantic = "~=1.10"
 
 [dev-packages]
+pylint = "~=2.16"
 
 [requires]
 python_version = "3.11"
