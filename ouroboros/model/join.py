@@ -9,7 +9,7 @@ from .table import TableModel, table_from_str
 
 
 class JoinModel(SQLAlchemyBaseModel):
-    left: Union[TableModel, 'JoinModel']
+    left:  Union[PivotModel, TableModel, 'JoinModel']
     right: Union[PivotModel, TableModel, 'JoinModel']
     on: str = Field(alias='onclause')
 

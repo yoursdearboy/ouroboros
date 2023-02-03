@@ -7,6 +7,13 @@ from .base import SQLAlchemyBaseModel
 from .table import TableModel, table_from_str
 
 
+def column_from_str(v):
+        if isinstance(v, str):
+            table, name = v.split('.')
+            return dict(table=table, name=name)
+        return v
+
+
 class ColumnModel(SQLAlchemyBaseModel):
     name: str
     element: Optional[str]

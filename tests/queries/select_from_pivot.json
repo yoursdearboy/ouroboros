@@ -1,26 +1,8 @@
 {
     "select": {
         "columns": [
-            {
-                "name": "patients_id",
-                "expr": {
-                    "name": "id",
-                    "element": null,
-                    "table": {
-                        "name": "patients"
-                    }
-                }
-            },
-            {
-                "name": "patients_last_name",
-                "expr": {
-                    "name": "last_name",
-                    "element": null,
-                    "table": {
-                        "name": "patients"
-                    }
-                }
-            },
+            "patients.id",
+            "patients.last_name",
             {
                 "name": "diagnoses",
                 "expr": {
@@ -58,18 +40,10 @@
         ],
         "froms": [
             {
-                "left": {
-                    "name": "patients"
-                },
+                "left": "patients",
                 "right": {
                     "name": "diagnoses",
-                    "pivot_by": {
-                        "name": "patient_id",
-                        "element": null,
-                        "table": {
-                            "name": "diagnoses"
-                        }
-                    }
+                    "pivot_by": "diagnoses.patient_id"
                 },
                 "on": "patients.id = diagnoses.patient_id"
             }
