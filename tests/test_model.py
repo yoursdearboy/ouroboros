@@ -1,4 +1,5 @@
 import unittest
+from pprint import pprint
 
 import sqlalchemy as sa
 
@@ -9,14 +10,23 @@ from tests import utils
 
 
 class QueryTestCase(utils.db.TestCase, unittest.TestCase):
+    def _display_query_model(self, qm):
+
+        print()
+        pprint(qm.dict())
+
+    def _display_query(self, q):
+        print()
+        print(q)
+
     def test_select_from_serialization(self):
         patients = self.metadata.tables['patients']
 
         q = self.session.query(patients.columns.id, patients.columns.last_name)
 
-        s = QueryModel.from_orm(q)
+        qm = QueryModel.from_orm(q)
 
-        print(s.dict())
+        self._display_query_model(qm)
 
     def test_select_from_join_serialization(self):
         tables = self.metadata.tables
@@ -27,9 +37,9 @@ class QueryTestCase(utils.db.TestCase, unittest.TestCase):
                 .query(patients.columns.id, patients.columns.last_name) \
                 .join(diagnoses).add_columns(diagnoses.columns.icd_code)
 
-        s = QueryModel.from_orm(q)
+        qm = QueryModel.from_orm(q)
 
-        print(s.json())
+        self._display_query_model(qm)
 
     def test_select_from_nested_join_serialization(self):
         tables = self.metadata.tables
@@ -44,27 +54,30 @@ class QueryTestCase(utils.db.TestCase, unittest.TestCase):
                 .join(donorships, donorships.columns.patient_id == patients.columns.id) \
                 .join(donors, donors.columns.id == donorships.columns.donor_id)
 
-        s = QueryModel.from_orm(q)
+        qm = QueryModel.from_orm(q)
 
-        print(s.json())
+        self._display_query_model(qm)
 
     def test_select_from_deserialization(self):
         with QueryModel.context(self.metadata, self.session):
             qm = QueryModel.parse_file("tests/queries/select_from.json")
             q = qm.query()
-        print(q)
+
+        self._display_query(q)
 
     def test_select_from_join_deserialization(self):
         with QueryModel.context(self.metadata, self.session):
             qm = QueryModel.parse_file("tests/queries/select_from_join.json")
             q = qm.query()
-        print(q)
+
+        self._display_query(q)
 
     def test_select_from_nested_join_deserialization(self):
         with QueryModel.context(self.metadata, self.session):
             qm = QueryModel.parse_file("tests/queries/select_from_nested_join.json")
             q = qm.query()
-        print(q)
+
+        self._display_query(q)
 
     def test_select_from_pivot_serialization(self):
         tables = self.metadata.tables
@@ -106,17 +119,13 @@ class QueryTestCase(utils.db.TestCase, unittest.TestCase):
                 .query(patients.columns.id, patients.columns.last_name, rebundles) \
                 .join(diagnoses_query)
 
-        print(q.selectable.get_final_froms()[0].right)
-        print(dir(q.selectable.get_final_froms()[0].right))
-        print(q.selectable.get_final_froms()[0].right.columns)
+        qm = QueryModel.from_orm(q)
 
-        s = QueryModel.from_orm(q)
-
-        print(s.json())
+        self._display_query_model(qm)
 
     def test_select_from_pivot_deserialization(self):
         with QueryModel.context(self.metadata, self.session):
             qm = QueryModel.parse_file("tests/queries/select_from_pivot.json")
             q = qm.query()
-        print(q)
-        print(q.all())
+
+        self._display_query(q)
