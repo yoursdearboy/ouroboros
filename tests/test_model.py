@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from ouroboros.model import QueryModel
 from ouroboros.pivot import pivot
 
-from . import utils
+from tests import utils
 
 
 class QueryTestCase(utils.db.TestCase, unittest.TestCase):
@@ -16,7 +16,7 @@ class QueryTestCase(utils.db.TestCase, unittest.TestCase):
 
         s = QueryModel.from_orm(q)
 
-        print(s.json())
+        print(s.dict())
 
     def test_select_from_join_serialization(self):
         tables = self.metadata.tables
