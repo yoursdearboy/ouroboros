@@ -12,11 +12,11 @@ class ColumnDescriptionModel(SQLAlchemyBaseModel):
     expr: Union[BundleModel, ColumnModel]
 
     @validator('expr', pre=True)
-    def _column_from_str(cls, obj, **kwargs):
-        if isinstance(obj, str):
-            table, name = obj.split('.')
+    def _column_from_str(cls, v, **kwargs):
+        if isinstance(v, str):
+            table, name = v.split('.')
             return dict(table=table, name=name)
-        return obj
+        return v
 
     def column(self):
         column = self.expr.column()

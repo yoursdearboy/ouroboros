@@ -5,6 +5,17 @@ from pydantic import BaseModel
 
 
 class SQLAlchemyBaseModel(BaseModel):
+    """
+    Base model for SQLAlchemy.
+    Provides SA Metadata and Session to objects in the hierarchy.
+    Use contextmanager to provide `metadata` and `session` instances:
+    ```
+    with QueryModel.context(md, session):
+        m = QueryModel()
+        assert m.md == md
+        assert m.session = session
+    ```
+    """
     __context__ = ContextVar('context')
 
     class Config:

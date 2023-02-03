@@ -12,7 +12,9 @@ class BundleModel(SQLAlchemyBaseModel):
 
     @validator('columns', pre=True)
     def _columns_to_list(cls, v, **kwargs):
-        return list(v)
+        if v is not None:
+            return list(v)
+        return
 
     def column(self):
         columns = [c.column() for c in self.columns]

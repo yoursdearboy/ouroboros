@@ -1,12 +1,11 @@
 from typing import Union
 
 import sqlalchemy as sa
-
 from pydantic import Field, validator
 
 from .base import SQLAlchemyBaseModel
-from .table import TableModel, table_from_str
 from .pivot import PivotModel
+from .table import TableModel, table_from_str
 
 
 class JoinModel(SQLAlchemyBaseModel):
@@ -18,8 +17,10 @@ class JoinModel(SQLAlchemyBaseModel):
     _right_from_str = validator('right', pre=True, allow_reuse=True)(table_from_str)
 
     @validator('on', pre=True)
-    def onclause_to_text(cls, v, values, **kwargs):
-        return str(v)
+    def onclause_to_text(cls, v, **kwargs):
+        if v is not None:
+            return str(v)
+        return v
 
     def join(self):
         return sa.orm.join(self.left.from_(), self.right.from_(), sa.text(self.on))

@@ -6,6 +6,7 @@ from pydantic import validator
 from .base import SQLAlchemyBaseModel
 from .table import TableModel, table_from_str
 
+
 class ColumnModel(SQLAlchemyBaseModel):
     name: str
     element: Optional[str]
@@ -13,7 +14,7 @@ class ColumnModel(SQLAlchemyBaseModel):
 
     @validator('element', pre=True)
     def _element_to_str(cls, v, **kwargs):
-        if v:
+        if v is not None:
             return str(v)
         return v
 

@@ -1,7 +1,7 @@
 from ouroboros.pivot import add_suffix, pivot
 
-from .table import TableModel
 from .column import ColumnModel
+from .table import TableModel
 
 
 class PivotModel(TableModel):
