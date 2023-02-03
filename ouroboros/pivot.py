@@ -1,4 +1,5 @@
 import sqlalchemy as sa
+import sqlalchemy.orm
 
 
 def pivot(query, pivot_by, order_by=None) -> sa.orm.query.Query:
