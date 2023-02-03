@@ -5,37 +5,28 @@
             "patients.last_name",
             {
                 "name": "diagnoses",
-                "expr": {
-                    "name": "diagnoses",
-                    "columns": [
-                        {
-                            "name": "1",
-                            "columns": [
-                                {
-                                    "name": "icd_code",
-                                    "expr": {
-                                        "name": "icd_code",
-                                        "element": "icd_code_1",
-                                        "table": null
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "name": "2",
-                            "columns": [
-                                {
-                                    "name": "icd_code",
-                                    "expr": {
-                                        "name": "icd_code",
-                                        "element": "icd_code_2",
-                                        "table": null
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                }
+                "columns": [
+                    {
+                        "name": "1",
+                        "columns": [
+                            {
+                                "name": "icd_code",
+                                "element": "icd_code_1",
+                                "table": null
+                            }
+                        ]
+                    },
+                    {
+                        "name": "2",
+                        "columns": [
+                            {
+                                "name": "icd_code",
+                                "element": "icd_code_2",
+                                "table": null
+                            }
+                        ]
+                    }
+                ]
             }
         ],
         "froms": [

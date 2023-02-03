@@ -11,8 +11,10 @@ class SelectableModel(SQLAlchemyBaseModel):
     froms: list[TableModel | JoinModel] = Field(alias='from')
 
     @validator('columns', pre=True, each_item=True)
-    def _columns_from_str(cls, v, **kwargs):
+    def _columns_from_expr(cls, v, **kwargs):
         if isinstance(v, str):
+            return dict(expr=v)
+        if isinstance(v, dict):
             return dict(expr=v)
         return v
 
