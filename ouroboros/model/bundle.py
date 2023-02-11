@@ -32,6 +32,7 @@ class BundleModel(SQLAlchemyBaseModel):
         columns = [c.column() for c in self.columns]
         return sa.orm.Bundle(self.name, *columns)
 
+
 from .column_description import ColumnDescriptionModel
 
 BundleModel.update_forward_refs()

@@ -114,6 +114,7 @@ class QueryTestCase(utils.db.TestCase, unittest.TestCase):
             rebundle = sa.orm.Bundle(bn, *rebundle)
             rebundles.append(rebundle)
         rebundles = sa.orm.Bundle("diagnoses", *rebundles)
+        setattr(rebundles, "pivot", diagnoses_query)
 
         q = self.session \
                 .query(patients.columns.id, patients.columns.last_name, rebundles) \
@@ -129,3 +130,5 @@ class QueryTestCase(utils.db.TestCase, unittest.TestCase):
             q = qm.query()
 
         self._display_query(q)
+        all = q.all()
+        print(all)

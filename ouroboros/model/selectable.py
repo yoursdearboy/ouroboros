@@ -14,7 +14,7 @@ class SelectableModel(SQLAlchemyBaseModel):
     def _columns_from_expr(cls, v, **kwargs):
         if isinstance(v, str):
             return dict(expr=v)
-        if isinstance(v, dict):
+        if isinstance(v, dict) and "expr" not in v:
             return dict(expr=v)
         return v
 
